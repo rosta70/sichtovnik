@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Šichtovník</title>
+
+    <style>
+nav ul {
+    list-style-type: none;
+    text-align: center;
+    padding: 10px 10px;
+    margin: 0;
+    background-color: white; /* Bílé pozadí */
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+nav li {
+    display: inline-block;
+    margin: 0 10px;
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px 18px;
+    font-size: 16px;
+    color: #333;
+    text-decoration: none;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.08);
+}
+
+/* Efekt jemného zvednutí při najetí */
+nav a:hover {
+    background-color: #f0f0f0;
+    border-color: #bbb;
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+      /* Zajistíme, aby tabulka měla fixní rozvržení */
+    table {
+        border-collapse: collapse;
+        margin-top: 20px;
+        width:100%; /* Toto může být i více než 100% pro horizontální rolování */
+}
+
+      /* Nastavení pro hlavičku tabulky */
+    thead {
+        position: -webkit-sticky; /* Pro starší Safari */
+        position: sticky;
+        top: 0;
+        z-index: 1000; /* Vyšší z-index pro jistotu */
+        background-color: #f2f2f2;
+}
+      /* Každá buňka v hlavičce potřebuje také background, aby neprosahoval obsah pod ní */
+    thead th {
+        background-color: #f2f2f2;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+}
+      /* Řešení problému s "bleeding" na některých mobilních zařízeních */
+    thead::after {
+       content: '';
+       position: absolute;
+       left: 0;
+       right: 0;
+       bottom: 0;
+       height: 1px; 
+       background-color: #1e1a1a; /* Stejná barva jako ohraničení tabulky */
+}
+    /* Přidejte tuto vlastnost pro zachování horizontálního rolování */
+    .input-container, table {
+    overflow-x: auto;
+}
+    @media print {
+    .input-container,  
+    button,            
+   /* input,*/             
+    select {           
+        display: none !important;
+    }
+
+    /* Skrytí posledních dvou sloupců */
+    th:nth-last-child(-n+2),
+    td:nth-last-child(-n+2) {
+        display: none;
+    }
+
+    table {
+        width: 100%;
+        font-size: 14px; /* Zmenší písmo pro úsporu místa */
+        border-collapse: collapse; /* Zabrání mezerám mezi buňkami */
+        page-break-inside: avoid; /* Zabrání rozdělení tabulky na více stran */
+    }
+
+    th, td {
+        border: 1px solid black;
+        padding: 3px;
+    }
+
+    /* Pevná výška řádků */
+    tr {
+        height: 20px; /* Nastaví výšku řádku – můžeš upravit podle potřeby */
+    }
+
+    /* Zabrání zalomení řádků uvnitř buňky */
+    td {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+        input[type="month"] {
+            font-size: 25px; /* Nastavte požadovanou velikost písma */
+        }
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 100%;
+        }
+        th, td {
+            border: 3px solid #1e1a1a;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            text-align: center;
+            white-space: pre-line;
+            padding: 2px;
+        }
+        .input-container {
+            margin: 20px 0;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .header-select {
+            width: 35px;
+            margin-bottom: 2px;
+            font-size: 12px;
+        }
+        .white-column {
+            background-color: #f4eded;
+        }
+        .red-column {
+            background-color: #ffcccc;
+        }
+        .green-column {
+            background-color: #ccffcc;
+        }
+        .yellow-column {
+            background-color: #ffffcc;
+        }
+        .blue-column {
+            background-color: #cce6ff;
+        }
+        .cell-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .cell-input {
+            width: 30px;
+            padding: 1px;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 0 auto;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .note-input {
+            width: 80px;
+            padding: 1px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        td {
+            padding: 2px;
+        }
+        .sum-column {
+            font-weight: bold;
+            background-color: #e6e6e6;
+            max-width: auto;
+            white-space: nowrap;
+        }
+         /* Chrome, Safari, Edge, Opera */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        /* Firefox */
+        input[type=number] {
+          -moz-appearance: textfield;
+        }
+        .delete-btn {
+            background-color: transparent;
+            color: #ff4444;
+            padding: 2px 6px;
+            margin-left: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+        }
+        .delete-btn:hover {
+            background-color: #ffeeee;
+        }
+        /* Styl pro buňku s nadpisem a vstupním polem */
+        .month-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .month-header-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="input-container">
+            <th> &nbsp Zvol první den v měsíci -> </th>
+        <select id="startDaySelect">
+            <option value="Po">Po</option>
+            <option value="Út">Út</option>
+            <option value="St">St</option>
+            <option value="Čt">Čt</option>
+            <option value="Pá">Pá</option>
+            <option value="So">So</option>
+            <option value="Ne">Ne</option>
+        </select>
+            <th> &nbsp Zvol prví směnu v měsíci -></th>
+        <select id="startCycleSelect">
+            <option value="R1_1">R1_1</option>
+            <option value="R2_1">R2_1</option>
+            <option value="N1_1">N1_1</option>
+            <option value="N2_1">N2_1</option>
+            <option value="O1_1">O1_1</option>
+            <option value="O2_1">O2_1</option>
+            <option value="V1_1">V1_1</option>
+            <option value="V2_1">V2_1</option>
+            <option value="N1_2">N1_2</option>
+            <option value="N2_2">N2_2</option>
+            <option value="O1_2">O1_2</option>
+            <option value="O2_2">O2_2</option>
+            <option value="R1_2">R1_2</option>
+            <option value="R2_2">R2_2</option>
+            <option value="V1_2">V1_2</option>
+            <option value="V2_2">V2_2</option>
+            <option value="O1_2">O1_3</option>
+            <option value="O2_2">O2_3</option>
+            <option value="R1_2">R1_3</option>
+            <option value="R2_2">R2_3</option>
+            <option value="N1_2">N1_3</option>
+            <option value="N2_2">N2_3</option>
+            <option value="V1_2">V1_3</option>
+            <option value="V2_2">V2_3</option>
+
+            
+        </select>
+        <th> &nbsp &nbsp </th>
+        <input type="text" id="nameInput" placeholder="Vlož jméno">
+        <button onclick="addName()">Přidat jméno</button>
+        <button onclick="saveData()" style="background-color: #008CBA;">Uložit do paměti</button>
+        <button onclick="backupData()" style="background-color: #9933CC;">Vytvořit zálohu</button>
+        <button onclick="document.getElementById('fileInput').click()" style="background-color: #FF8C00;">Nahrát zálohu</button>
+        <button onclick="window.print()" style="background-color: #555;">Tisk</button>
+        <input type="file" id="fileInput" style="display: none;" accept=".json" onchange="uploadData(this)">
+        <button onclick="clearLocalStorage()" style="background-color: #FF6347;">Vymazat paměť</button>
+        <button onclick="clearAllInputs()" style="background-color: #FF9900;">Vymazat vstupy</button>
+        <span id="lastSaveMessage" style="margin-left: 10px; color: #666;"></span>
+    </div>
+    <table id="namesTable">
+        <thead>
+            <tr id="headerRow">
+                <th>
+                    <div class="month-header">
+                        <input type="month" id="monthInput" name="mesic" value="obsah">
+                        <span class="month-header-label">---------</span>
+                        <span class="month-header-label">Jméno</span>
+                    </div>
+                </th>
+                <th>Poznámka</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+    <script>
+        const names = [];
+        const tableData = {}; // Hodnoty pro každé jméno
+        const notes = {}; // Poznámky pro každé jméno
+        const daysOfWeek = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
+        const cycleValues = ['R1_1', 'R2_1', 'N1_1', 'N2_1', 'O1_1', 'O2_1', 'V1_1', 'V2_1', 'N1_2', 'N2_2', 'O1_2', 'O2_2','R1_2', 'R2_2', 'V1_2', 'V2_2', 'O1_3', 'O2_3','R1_3', 'R2_3', 'N1_3', 'N2_3', 'V1_3', 'V2_3'];
+        const colors = {
+            '': 'white-column',
+            'R': 'red-column',
+            'O': 'yellow-column',
+            'N': 'blue-column',
+            'V': 'green-column'
+        };
+        function clearLocalStorage() {
+    if (confirm("Opravdu chcete smazat všechny data?")) {
+        localStorage.clear();
+        alert("Paměť byla smazána.");
+        location.reload(); // Obnoví stránku pro znovunačítání dat
+    }
+}
+        // Inicializace hlavičky tabulky
+        function initializeHeaders() {
+            const headerRow = document.getElementById('headerRow');
+            const startDay = document.getElementById('startDaySelect').value;
+            
+            let startCycle = 'R1_1';
+            const startCycleSelect = document.getElementById('startCycleSelect');
+            if (startCycleSelect) {
+                startCycle = startCycleSelect.value;
+    }
+       
+           let dayIndex = daysOfWeek.indexOf(startDay);
+           let cycleIndex = cycleValues.indexOf(startCycle);
+           if (cycleIndex === -1) cycleIndex = 0; // Bezpečnostní kontrola
+   
+
+            // Získání uložených barev před vyčištěním hlaviček
+            const savedHeaderColors = localStorage.getItem('headerColors');
+            const headerColors = savedHeaderColors ? JSON.parse(savedHeaderColors) : [];
+
+            // Vyčištění stávajících hlaviček kromě prvních dvou (Jméno a Poznámka)
+            while (headerRow.children.length > 2) {
+                headerRow.removeChild(headerRow.lastChild);
+            }
+
+            // Přidání hlaviček pro dny 1-31
+            for (let i = 1; i <= 31; i++) {
+                const th = document.createElement('th');
+                const colorSelect = document.createElement('select');
+                colorSelect.className = 'header-select';
+                colorSelect.innerHTML = `
+                    <option value=""></option>
+                    <option value="R">R</option>
+                    <option value="O">O</option>
+                    <option value="N">N</option>
+                    <option value="V">V</option>
+                `;
+                colorSelect.setAttribute('data-column', i);
+                
+                // Nastavení uložené barvy, pokud existuje
+                if (headerColors[i-1]) {
+                    const savedColor = headerColors[i-1];
+                    colorSelect.value = savedColor;
+                    const colorClass = colors[savedColor];
+                    if (colorClass) {
+                        th.classList.add(colorClass);
+                    }
+                }
+                
+                colorSelect.addEventListener('change', updateColumnColor);
+                
+                th.appendChild(colorSelect);
+                th.appendChild(document.createElement('br'));
+                th.appendChild(document.createTextNode(i));
+                th.appendChild(document.createElement('br'));
+                th.appendChild(document.createTextNode(daysOfWeek[dayIndex]));
+
+                // Přidání informace o cyklu
+                th.appendChild(document.createElement('br'));
+                th.appendChild(document.createTextNode(cycleValues[cycleIndex]));
+               
+                headerRow.appendChild(th);
+                
+                dayIndex = (dayIndex + 1) % 7;
+                cycleIndex = (cycleIndex + 1) % cycleValues.length;
+            }
+
+            // Přidání hlavičky sloupce pro součet
+            const sumTh = document.createElement('th');
+            sumTh.textContent = 'Suma';
+            sumTh.className = 'sum-column';
+            headerRow.appendChild(sumTh);
+
+            // Přidání hlavičky sloupce pro součet symbolů
+            const symbolSumTh = document.createElement('th');
+            symbolSumTh.textContent = 'Suma symbolů';
+            symbolSumTh.className = 'sum-column';
+            headerRow.appendChild(symbolSumTh);
+        }
+        
+        // Aktualizace barvy sloupce
+        function updateColumnColor(event) {
+            const select = event.target;
+            const columnIndex = parseInt(select.getAttribute('data-column'));
+            const colorClass = colors[select.value];
+            
+            // Získání buňky hlavičky a aktualizace její barvy
+            const headerCell = select.closest('th');
+            if (headerCell) {
+                Object.values(colors).forEach(cls => {
+                    if (cls) headerCell.classList.remove(cls);
+                });
+                if (colorClass) {
+                    headerCell.classList.add(colorClass);
+                }
+            }
+            
+            // Aktualizace buněk dat
+            const table = document.getElementById('namesTable');
+            const rows = table.getElementsByTagName('tr');
+            
+            // Aktualizace datových buněk (přeskočit řádek hlavičky)
+            for (let i = 1; i < rows.length; i++) {
+                const cell = rows[i].children[columnIndex + 1]; // +1 pro poznámkový sloupec
+                if (cell) {
+                    Object.values(colors).forEach(cls => {
+                        if (cls) cell.classList.remove(cls);
+                    });
+                    if (colorClass) {
+                        cell.classList.add(colorClass);
+                    }
+                }
+            }
+        }
+
+        // Výpočet součtů řádků
+        function calculateRowSums(row) {
+            let totalSum = 0;
+            const symbolSums = {};
+            
+            // Získání všech buněk vstupů kromě jména, poznámky a posledních dvou (sloupce součtů)
+            const cells = Array.from(row.getElementsByTagName('td')).slice(2, -2);
+            
+            cells.forEach(cell => {
+                const inputs = cell.getElementsByTagName('input');
+                const numberInput = inputs[0];
+                const textInput = inputs[1];
+                
+                // Získání číselné hodnoty
+                const value = parseFloat(numberInput.value) || 0;
+                totalSum += value;
+                
+                // Přidání do součtů symbolů, pokud existuje symbol
+                const symbol = textInput.value.trim().toUpperCase();
+                if (symbol && value !== 0) {
+                    symbolSums[symbol] = (symbolSums[symbol] || 0) + value;
+                }
+            });
+            
+            // Aktualizace sloupce součtu
+            const sumCell = row.children[row.children.length - 2];
+            sumCell.textContent = totalSum.toFixed(1);
+            
+            // Aktualizace sloupce součtů symbolů
+            const symbolSumsCell = row.children[row.children.length - 1];
+            const symbolText = Object.entries(symbolSums)
+                .map(([symbol, sum]) => `${symbol}:${sum.toFixed(1)}`)
+                .join(', ');
+            symbolSumsCell.textContent = symbolText;
+        }
+
+        // Přidání jména
+        function addName() {
+            const nameInput = document.getElementById('nameInput');
+            const name = nameInput.value.trim();
+            if (name && !names.includes(name)) {
+                names.push(name);
+                tableData[name] = Array(31).fill().map(() => ['', '']); // Inicializace dat pro nové jméno
+                notes[name] = ''; // Inicializace prázdné poznámky pro nové jméno
+                nameInput.value = '';
+                updateTable();
+            }
+        }
+
+        // Aktualizace tabulky
+        function updateTable() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            
+            // Získání aktuálních barev hlaviček
+            const headerColors = Array.from(document.querySelectorAll('.header-select')).map(select => ({
+                column: parseInt(select.getAttribute('data-column')),
+                color: select.value
+            }));
+            
+            names.forEach((name, index) => {
+                const row = document.createElement('tr');
+                
+                // Přidání buňky jména s tlačítkem pro odstranění
+                const nameCell = document.createElement('td');
+                nameCell.style.whiteSpace = 'nowrap';
+                nameCell.textContent = name;
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '×';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.title = 'Smazat';
+                deleteBtn.onclick = () => deleteName(index);
+                nameCell.appendChild(deleteBtn);
+                
+                row.appendChild(nameCell);
+                
+                // Přidání buňky poznámky
+                const noteCell = document.createElement('td');
+                const noteInput = document.createElement('input');
+                noteInput.type = 'text';
+                noteInput.className = 'note-input';
+                noteInput.value = notes[name] || '';
+                noteInput.onchange = (e) => {
+                    notes[name] = e.target.value;
+                };
+                noteInput.oninput = (e) => {
+                    notes[name] = e.target.value;
+                };
+                noteCell.appendChild(noteInput);
+                row.appendChild(noteCell);
+                
+                // Inicializace datové struktury pro toto jméno, pokud neexistuje
+                if (!tableData[name]) {
+                    tableData[name] = Array(31).fill().map(() => ['', '']);
+                }
+                
+                // Přidání vstupních buněk pro každý den
+                for (let i = 1; i <= 31; i++) {
+                    const cell = document.createElement('td');
+                    const cellInputs = document.createElement('div');
+                    cellInputs.className = 'cell-inputs';
+                    
+                    // Použití barvy sloupce, pokud existuje
+                    const colorInfo = headerColors.find(c => c.column === i);
+                    if (colorInfo && colorInfo.color) {
+                        const colorClass = colors[colorInfo.color];
+                        if (colorClass) {
+                            cell.classList.add(colorClass);
+                        }
+                    }
+                    
+                    // Vytvoření vstupních polí s uloženými hodnotami
+                    const input1 = document.createElement('input');
+                    input1.type = 'number';
+                    input1.className = 'cell-input';
+                    input1.value = tableData[name][i-1][0];
+                    input1.onchange = (e) => {
+                        tableData[name][i-1][0] = e.target.value;
+                        calculateRowSums(row);
+                    };
+                    input1.oninput = (e) => {
+                        tableData[name][i-1][0] = e.target.value;
+                        calculateRowSums(row);
+                    };
+                    
+                    const input2 = document.createElement('input');
+                    input2.type = 'text';
+                    input2.className = 'cell-input';
+                    input2.maxLength = 2;
+                    input2.value = tableData[name][i-1][1];
+                    input2.onchange = (e) => {
+                        const value = e.target.value.toUpperCase();
+                        e.target.value = value;
+                        tableData[name][i-1][1] = value;
+                        calculateRowSums(row);
+                    };
+                    input2.oninput = (e) => {
+                        const value = e.target.value.toUpperCase();
+                        e.target.value = value;
+                        tableData[name][i-1][1] = value;
+                        calculateRowSums(row);
+                    };
+                    
+                    cellInputs.appendChild(input1);
+                    cellInputs.appendChild(input2);
+                    cell.appendChild(cellInputs);
+                    row.appendChild(cell);
+                }
+                
+                // Přidání buňky součtu
+                const sumCell = document.createElement('td');
+                sumCell.className = 'sum-column';
+                row.appendChild(sumCell);
+                
+                // Přidání buňky součtů symbolů
+                const symbolSumsCell = document.createElement('td');
+                symbolSumsCell.className = 'sum-column';
+                row.appendChild(symbolSumsCell);
+                
+                tableBody.appendChild(row);
+                calculateRowSums(row);
+            });
+        }
+
+        // Odstranění jména
+        function deleteName(index) {
+            const name = names[index];
+            if (confirm(`Opravdu chcete jméno "${name}" smazat?`)) {
+                names.splice(index, 1);
+                // Ponechání dat v tableData pro případ, že jméno bude přidáno zpět
+                updateTable();
+                saveData();
+            }
+        }
+
+        // Přidání posluchače událostí pro změny combo boxu
+        document.getElementById('startDaySelect').addEventListener('change', initializeHeaders);
+
+        // Formátování data a času
+        function formatDateTime(date) {
+            const pad = (n) => n < 10 ? '0' + n : n;
+            return `${pad(date.getDate())}.${pad(date.getMonth() + 1)}.${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+        }
+
+        // Zobrazení zprávy o posledním uložení
+        function showLastSaveMessage(timestamp) {
+            const date = new Date(timestamp);
+            const formattedDate = formatDateTime(date);
+            document.getElementById('lastSaveMessage').textContent = `Naposledy uloženo dne a čas: ${formattedDate}`;
+        }
+
+        // Načtení dat z localStorage
+        function loadData() {
+            const savedNames = localStorage.getItem('names');
+            const savedHeaderColors = localStorage.getItem('headerColors');
+            const savedTableData = localStorage.getItem('tableData');
+            const savedStartDay = localStorage.getItem('startDay');
+            const savedNotes = localStorage.getItem('notes');
+            const lastSaveTime = localStorage.getItem('lastSaveTime');
+            const monthInput = localStorage.getItem('monthInput');
+
+            // Vyčištění existujících dat
+            names.length = 0;
+            Object.keys(tableData).forEach(key => delete tableData[key]);
+
+            if (savedStartDay) {
+                document.getElementById('startDaySelect').value = savedStartDay;
+            }
+
+            if(monthInput) {
+                document.getElementById('monthInput').value = monthInput;
+            }
+
+            if (savedNames) {
+                names.push(...JSON.parse(savedNames));
+            }
+
+            if (savedTableData) {
+                const savedData = JSON.parse(savedTableData);
+                Object.assign(tableData, savedData);
+            }
+
+            if (savedNotes) {
+                const savedNotesData = JSON.parse(savedNotes);
+                Object.assign(notes, savedNotesData);
+            }
+
+            const savedStartCycle = localStorage.getItem('startCycle');
+            if (savedStartCycle) {
+                document.getElementById('startCycleSelect').value = savedStartCycle;
+            }
+
+            // Inicializace hlaviček s uloženými barvami
+            const headerColors = savedHeaderColors ? JSON.parse(savedHeaderColors) : null;
+            initializeHeaders();
+
+            // Aktualizace tabulky s daty a barvami
+            updateTable();
+
+            if (lastSaveTime) {
+                showLastSaveMessage(parseInt(lastSaveTime));
+            }
+        }
+
+        // Uložení dat
+        function saveData() {
+            // Uložení jmen
+            localStorage.setItem('names', JSON.stringify(names));
+
+            // Uložení dat tabulky přesně tak, jak jsou
+            localStorage.setItem('tableData', JSON.stringify(tableData));
+
+            // Uložení poznámek
+            localStorage.setItem('notes', JSON.stringify(notes));
+
+            localStorage.setItem('startCycle', document.getElementById('startCycleSelect').value);
+
+            // Uložení barev hlaviček
+            const headerColors = Array.from(document.querySelectorAll('.header-select')).map(select => select.value);
+            localStorage.setItem('headerColors', JSON.stringify(headerColors));
+
+            // Uložení počátečního dne
+            localStorage.setItem('startDay', document.getElementById('startDaySelect').value);
+
+            // Uložení vstupu měsíce
+            localStorage.setItem('monthInput', document.getElementById('monthInput').value);
+
+            // Uložení časového razítka
+            const timestamp = Date.now();
+            localStorage.setItem('lastSaveTime', timestamp);
+            showLastSaveMessage(timestamp);
+        }
+
+        // Vytvoření zálohy dat
+        function backupData() {
+            // Získání aktuálních barev hlaviček
+            const headerColors = [];
+            const monthValue = document.getElementById('monthInput').value;
+            const colorSelects = document.querySelectorAll('.header-select');
+
+            colorSelects.forEach(select => {
+                headerColors.push(select.value);
+            });
+
+            // Příprava datového objektu
+            const backupData = {
+                names: names,
+                tableData: tableData,
+                notes: notes,
+                headerColors: headerColors,
+                monthValue: monthValue,
+                startDay: document.getElementById('startDaySelect').value,
+                startCycle: document.getElementById('startCycleSelect').value,
+                timestamp: formatDateTime(new Date()),
+            };
+
+            // Převedení na JSON a vytvoření blobu
+            const jsonData = JSON.stringify(backupData, null, 2);
+            const blob = new Blob([jsonData], { type: 'application/json' });
+            
+            // Vytvoření odkazu pro stažení
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = `Šichtovnik_4S_${backupData.timestamp.replace(/[: ]/g, '_')}.json`;
+            
+            // Spuštění stahování
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            
+            // Úklid
+            URL.revokeObjectURL(downloadLink.href);
+        }
+
+        // Nahrání dat
+        function uploadData(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const backupData = JSON.parse(e.target.result);
+                    
+                    // Ověření struktury záložních dat
+                    if (!backupData.names || !backupData.tableData || !Array.isArray(backupData.headerColors)) {
+                        throw new Error('Špatý format zálohy');
+                    }
+
+                    // Obnovení dat
+                    names.length = 0; // Vyčištění existujících jmen
+                    names.push(...backupData.names);
+                    Object.assign(tableData, backupData.tableData);
+                    
+                    // Obnovení poznámek, pokud jsou k dispozici
+                    if (backupData.notes) {
+                        Object.assign(notes, backupData.notes);
+                    }
+                    
+                    document.getElementById('monthInput').value = backupData.monthValue;
+                    
+                    if (backupData.startCycle) {
+                        document.getElementById('startCycleSelect').value = backupData.startCycle;
+                    }
+                    // Použití barev hlaviček
+                    const headerRow = document.getElementById('headerRow');
+                    const colorSelects = headerRow.querySelectorAll('.header-select');
+                    backupData.headerColors.forEach((color, index) => {
+                        if (colorSelects[index]) {
+                            colorSelects[index].value = color;
+                            const th = colorSelects[index].closest('th');
+                            // Vyčištění existujících barevných tříd
+                            Object.values(colors).forEach(cls => {
+                                if (cls) { // Odstranění pouze neprázdných názvů tříd
+                                    th.classList.remove(cls);
+                                }
+                            });
+                            // Přidání nové barevné třídy, pokud barva existuje
+                            if (color && colors[color]) {
+                                th.classList.add(colors[color]);
+                            }
+                        }
+                    });
+                    
+                    // Aktualizace tabulky
+                    updateTable();
+                    
+                    alert('Data byla úspěšně načtena ze zálohy!');
+                } catch (error) {
+                    alert('Chyba při načtení zálohy: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset vstupního pole souboru
+            input.value = '';
+        }
+
+        if (document.getElementById('startCycleSelect')) {
+            document.getElementById('startCycleSelect').addEventListener('change', initializeHeaders);
+        }
+        
+        // Načtení dat při načtení stránky
+        loadData();
+
+        // Inicializace hlaviček tabulky při načtení stránky
+        initializeHeaders();
+
+// Funkce pro vymazání všech vstupních polí
+function clearAllInputs() {
+    if (confirm("Opravdu chcete vymazat všechny vložené hodnoty? (jména a struktura zůstanou zachována)")) {
+        // Vyčistíme tabulková data pro všechna jména
+        for (const name in tableData) {
+            tableData[name] = Array(31).fill().map(() => ['', '']);
+        }
+        
+        // Vyčistíme poznámky
+        for (const name in notes) {
+            notes[name] = '';
+        }
+        
+        // Aktualizujeme tabulku
+        updateTable();
+        
+        // Uložíme prázdná data
+        saveData();
+        
+        alert("Všechny vstupy byly vymazány.");
+    }
+}
+
+// Funkce pro spuštění automatického ukládání
+function startAutoSave(intervalSeconds = 60) {
+    // Uložíme data okamžitě při načtení stránky
+    saveData();
+    
+    // Nastavíme interval pro pravidelné ukládání
+    setInterval(saveData, intervalSeconds * 1000);
+    
+    console.log(`Automatické ukládání spuštěno (každých ${intervalSeconds} sekund)`);
+}
+
+// Spustíme automatické ukládání při načtení stránky
+startAutoSave();
+    </script>
+</body>
+</html>
