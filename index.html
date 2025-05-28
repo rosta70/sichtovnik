@@ -742,7 +742,7 @@ nav a:hover {
             // Vytvoření odkazu pro stažení
             const downloadLink = document.createElement('a');
             downloadLink.href = URL.createObjectURL(blob);
-            downloadLink.download = `Šichtovnik_4S_${backupData.timestamp.replace(/[: ]/g, '_')}.json`;
+            downloadLink.download = `Šichtovnik_${backupData.timestamp.replace(/[: ]/g, '_')}.json`;
             
             // Spuštění stahování
             document.body.appendChild(downloadLink);
