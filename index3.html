@@ -249,15 +249,15 @@ nav a:hover {
         </select>
             <th> &nbsp Zvol prví směnu v měsíci -></th>
         <select id="startCycleSelect">
-            <option value="V1">V1</option>
-            <option value="V2">V2</option>
+            <option value="V1_1">V1_1</option>
+            <option value="V2_1">V2_1</option>
             <option value="R1">R1</option>
             <option value="R2">R2</option>
             <option value="R3">R3</option>
             <option value="R4">R4</option>
             <option value="R5">R5</option>
-            <option value="V1">V1</option> 
-            <option value="V2">V2</option>
+            <option value="V1_2">V1_2</option> 
+            <option value="V2_2">V2_2</option>
             <option value="O1">O1</option>
             <option value="O2">O2</option>
             <option value="O3">O3</option>
@@ -300,7 +300,7 @@ nav a:hover {
         const tableData = {}; // Hodnoty pro každé jméno
         const notes = {}; // Poznámky pro každé jméno
         const daysOfWeek = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
-        const cycleValues = ['V1', 'V2', 'R1', 'R2', 'R3', 'R4', 'R5', 'V1','V2','O1','O2','O3','O4','O5'];
+        const cycleValues = ['V1_1', 'V2_1', 'R1', 'R2', 'R3', 'R4', 'R5', 'V1_2','V2_2','O1','O2','O3','O4','O5'];
         const colors = {
             '': 'white-column',
             'R': 'red-column',
@@ -320,7 +320,7 @@ nav a:hover {
             const headerRow = document.getElementById('headerRow');
             const startDay = document.getElementById('startDaySelect').value;
             
-            let startCycle = 'V1';
+            let startCycle = 'V1_1';
             const startCycleSelect = document.getElementById('startCycleSelect');
             if (startCycleSelect) {
                 startCycle = startCycleSelect.value;
