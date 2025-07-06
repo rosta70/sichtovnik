@@ -310,7 +310,31 @@ nav a:hover {
         const tableData = {}; // Hodnoty pro každé jméno
         const notes = {}; // Poznámky pro každé jméno
         const daysOfWeek = ['Po', 'Út', 'St', 'Čt', 'Pá', 'So', 'Ne'];
-        const cycleValues = ['R1_1', 'R2_1', 'N1_1', 'N2_1', 'O1_1', 'O2_1', 'V1_1', 'V2_1', 'N1_2', 'N2_2', 'O1_2', 'O2_2','R1_2', 'R2_2', 'V1_2', 'V2_2', 'O1_3', 'O2_3','R1_3', 'R2_3', 'N1_3', 'N2_3', 'V1_3', 'V2_3'];
+        const cycleValues = [ {
+            value: 'R1_1', label: 'R1' },
+            { value: 'R2_1', label: 'R2' },
+            { value: 'N1_1', label: 'N1' },
+            { value: 'N2_1', label: 'N2' },
+            { value: 'O1_1', label: 'O1' },
+            { value: 'O2_1', label: 'O2' },
+            { value: 'V1_1', label: 'V1' },
+            { value: 'V2_1', label: 'V2'},
+            { value: 'N1_2', label: 'N1' },
+            { value: 'N2_2', label: 'N2' },
+            { value: 'O1_2', label: 'O1' },
+            { value: 'O2_2', label: 'O2' },
+            { value: 'R1_2', label: 'R1' },
+            { value: 'R2_2', label: 'R2' },
+            { value: 'V1_2', label: 'V1' },
+            { value: 'V2_2', label: 'V2'},
+            { value: 'O1_3', label: 'O1' },
+            { value: 'O2_3', label: 'O2' },
+            { value: 'R1_3', label: 'R1' },
+            { value: 'R2_3', label: 'R2' },
+            { value: 'N1_3', label: 'N1' },
+            { value: 'N2_3', label: 'N2' },
+            { value: 'V1_3', label: 'V1' },
+            { value: 'V2_3', label: 'V2'}];
         const colors = {
             '': 'white-column',
             'R': 'red-column',
@@ -337,7 +361,10 @@ nav a:hover {
     }
        
            let dayIndex = daysOfWeek.indexOf(startDay);
-           let cycleIndex = cycleValues.indexOf(startCycle);
+           //let cycleIndex = cycleValues.indexOf(startCycle);
+           let cycleIndex = cycleValues.map(e => e.value).indexOf(startCycle);
+
+           console.log(cycleIndex)
            if (cycleIndex === -1) cycleIndex = 0; // Bezpečnostní kontrola
    
 
@@ -384,7 +411,7 @@ nav a:hover {
 
                 // Přidání informace o cyklu
                 th.appendChild(document.createElement('br'));
-                th.appendChild(document.createTextNode(cycleValues[cycleIndex]));
+                th.appendChild(document.createTextNode(cycleValues[cycleIndex].label));
                
                 headerRow.appendChild(th);
                 
